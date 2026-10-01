@@ -1,0 +1,12 @@
+---
+- name: Tool mac-server
+  community.routeros.api_modify:
+    path: tool mac-server
+    data: "{{ [routeros_tool_mac_server] }}"
+  when: routeros_tool_mac_server is not none
+
+- name: Tool mac-server mac-winbox
+  community.routeros.api_modify:
+    path: tool mac-server mac-winbox
+    data: "{{ [routeros_tool_mac_server_mac_winbox] }}"
+  when: routeros_tool_mac_server_mac_winbox is not none

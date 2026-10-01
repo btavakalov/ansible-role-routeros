@@ -1,0 +1,6 @@
+---
+- name: Routing table
+  community.routeros.api_modify:
+    path: routing table
+    data: "{{ routeros_routing_tables }}"
+  failed_when: false

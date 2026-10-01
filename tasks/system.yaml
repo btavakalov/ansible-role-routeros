@@ -1,0 +1,12 @@
+---
+- name: System clock
+  community.routeros.api_modify:
+    path: system clock
+    data: "{{ [routeros_system_clock] }}"
+  when: routeros_system_clock is not none
+
+- name: System NTP client
+  community.routeros.api_modify:
+    path: system ntp client
+    data: "{{ [routeros_system_ntp_client] }}"
+  when: routeros_system_ntp_client is not none

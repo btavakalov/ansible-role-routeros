@@ -1,0 +1,30 @@
+---
+- name: Interface bridge
+  community.routeros.api_modify:
+    path: interface bridge
+    data: "{{ routeros_interface_bridges }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_bridges is not none
+
+- name: Interface bridge port
+  community.routeros.api_modify:
+    path: interface bridge port
+    data: "{{ routeros_interface_bridge_ports }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_bridge_ports is not none
+
+- name: Interface list
+  community.routeros.api_modify:
+    path: interface list
+    data: "{{ routeros_interface_lists }}"
+    handle_absent_entries: remove
+  when: routeros_interface_lists is not none
+
+- name: Interface list member
+  community.routeros.api_modify:
+    path: interface list member
+    data: "{{ routeros_interface_list_members }}"
+    handle_absent_entries: remove
+  when: routeros_interface_list_members is not none

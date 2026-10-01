@@ -1,0 +1,105 @@
+---
+routeros_api_args:
+  hostname: "{{ ansible_host }}"
+  username: "{{ ansible_user }}"
+  password: "{{ ansible_password }}"
+  timeout: 60
+
+routeros_identity: "{{ inventory_hostname }}"
+
+routeros_system_clock: null
+routeros_system_ntp_client: null
+
+routeros_state_dir: "{{ inventory_dir }}/../state"
+
+routeros_state_ok: "{{ routeros_state.results | default([]) | selectattr('result', 'defined') | list }}"
+
+routeros_state_volatile_keys:
+  - date
+  - time
+
+routeros_state_secret_keys:
+  - wpa-pre-shared-key
+  - wpa2-pre-shared-key
+  - static-key-0
+  - static-key-1
+  - static-key-2
+  - static-key-3
+  - static-sta-private-key
+  - password
+  - secret
+  - authentication-password
+  - encryption-password
+  - private-key
+  - preshared-key
+
+routeros_state_public_keys:
+  - public-key
+  - authentication-types
+  - authoritative
+  - certificate
+  - static-transmit-key
+  - eap-methods
+  - allow-remote-requests
+  - allowed-interface-list
+  - discover-interface-list
+  - radius-called-format
+  - user
+
+routeros_state_secret_pattern: "key|password|passphrase|secret|community|token|credential|hash|auth|private"
+
+routeros_users: null
+
+routeros_license_account: null
+routeros_license_password: null
+routeros_license_level: "free"
+
+routeros_wireguard_interfaces: null
+routeros_wireguard_peers: null
+
+routeros_routing_tables: []
+
+routeros_interface_bridges: null
+routeros_interface_bridge_ports: null
+routeros_interface_lists: null
+routeros_interface_list_members: null
+
+routeros_interface_wifi: null
+routeros_interface_wifi_securities: null
+routeros_interface_wifi_datapaths: null
+routeros_interface_wifi_steering: null
+routeros_interface_wifi_configurations: null
+routeros_interface_wifi_provisioning: null
+routeros_interface_wifi_capsman: null
+routeros_interface_wifi_cap: null
+
+routeros_interface_wireless: null
+routeros_interface_wireless_security_profiles: null
+
+routeros_ip_addresses: null
+routeros_ip_dhcp_clients: null
+routeros_ip_routes: null
+
+routeros_ip_dns: null
+routeros_ip_dns_static: null
+
+routeros_ip_pools: null
+routeros_ip_dhcp_servers: null
+routeros_ip_dhcp_server_networks: null
+routeros_ip_dhcp_server_options: null
+routeros_ip_dhcp_server_leases: null
+
+routeros_ip_neighbor_discovery_settings: null
+routeros_ip_services: null
+
+routeros_ip_firewall_filter: null
+routeros_ip_firewall_mangle: null
+routeros_ip_firewall_nat: null
+routeros_ip_firewall_raw: null
+routeros_ip_firewall_address_list: null
+
+routeros_tool_mac_server: null
+routeros_tool_mac_server_mac_winbox: null
+
+routeros_snmp: null
+routeros_snmp_communities: null

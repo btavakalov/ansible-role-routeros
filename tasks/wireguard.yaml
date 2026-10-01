@@ -1,0 +1,14 @@
+---
+- name: Interface wireguard
+  community.routeros.api_modify:
+    path: interface wireguard
+    data: "{{ routeros_wireguard_interfaces }}"
+    handle_absent_entries: remove
+  when: routeros_wireguard_interfaces is not none
+
+- name: Interface wireguard peers
+  community.routeros.api_modify:
+    path: interface wireguard peers
+    data: "{{ routeros_wireguard_peers }}"
+    handle_absent_entries: remove
+  when: routeros_wireguard_peers is not none

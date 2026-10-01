@@ -1,0 +1,47 @@
+---
+routeros_state_paths:
+  - system identity
+  - system clock
+  - system ntp client
+  - system routerboard settings
+  - system scheduler
+  - system script
+  - user
+  - user group
+  - ip service
+  - ip address
+  - ip route
+  - ip dns
+  - ip dns static
+  - ip dhcp-client
+  - ip dhcp-server
+  - ip dhcp-server network
+  - ip dhcp-server option
+  - ip dhcp-server lease
+  - ip pool
+  - ip firewall filter
+  - ip firewall nat
+  - ip firewall mangle
+  - ip firewall address-list
+  - ip firewall raw
+  - ip neighbor discovery-settings
+  - tool mac-server
+  - tool mac-server mac-winbox
+  - interface list
+  - interface list member
+  - interface bridge
+  - interface bridge port
+  - interface ethernet
+  - interface vlan
+  - interface wireless
+  - interface wireguard
+  - interface wireguard peers
+  - interface wireless security-profiles
+  - interface pppoe-client
+  - ppp secret
+  - queue simple
+  - snmp
+  - snmp community
+  - routing table
+  - ip firewall connection tracking
+  - routing ospf instance

@@ -1,0 +1,46 @@
+---
+- name: Read configuration
+  community.routeros.api_info:
+    path: "{{ item }}"
+  loop: "{{ routeros_state_paths }}"
+  register: routeros_state
+  failed_when: false
+  check_mode: false
+
+- name: Report unsupported paths
+  ansible.builtin.debug:
+    msg: "{{ routeros_state.results | rejectattr('result', 'defined') | map(attribute='item') | list }}"
+
+- name: Create state directory
+  ansible.builtin.file:
+    path: "{{ routeros_state_dir }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  run_once: true
+  check_mode: false
+
+- name: Check snapshot for unknown secret-looking fields
+  vars:
+    suspicious: "{{ routeros_state_ok | map(attribute='result') | flatten | map('dict2items') | flatten
+                    | rejectattr('value', 'in', [None, '', false])
+                    | map(attribute='key') | select('search', routeros_state_secret_pattern) | unique
+                    | reject('in', routeros_state_secret_keys)
+                    | reject('in', routeros_state_public_keys) | list }}"
+  ansible.builtin.assert:
+    that: suspicious | length == 0
+    fail_msg: >-
+      Unlisted secret-looking fields: {{ suspicious | join(', ') }}.
+      Add them to routeros_state_secret_keys or routeros_state_public_keys.
+
+- name: Write sanitized state
+  vars:
+    clean: "{{ dict(routeros_state_ok | map(attribute='item') | zip(routeros_state_ok | map(attribute='result')
+               | map('map', 'dict2items') | map('map', 'rejectattr', 'key', 'in', routeros_state_secret_keys + routeros_state_volatile_keys)
+               | map('map', 'items2dict') | map('list'))) }}"
+  ansible.builtin.copy:
+    content: "{{ clean | to_nice_yaml(indent=2) }}"
+    dest: "{{ routeros_state_dir }}/{{ inventory_hostname }}.yaml"
+    mode: "0644"
+  delegate_to: localhost
+  check_mode: false

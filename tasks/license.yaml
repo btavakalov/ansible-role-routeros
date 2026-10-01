@@ -1,0 +1,15 @@
+---
+- name: Get current license
+  community.routeros.api:
+    path: system license
+  register: routeros_license_info
+  check_mode: false
+
+- name: Renew license
+  when:
+    - routeros_license_account is not none
+    - routeros_license_info.msg[0].level != routeros_license_level
+  community.routeros.api:
+    path: system license
+    cmd: "renew account={{ routeros_license_account }} password={{ routeros_license_password }} level={{ routeros_license_level }}"
+  no_log: true

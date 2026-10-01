@@ -1,0 +1,48 @@
+---
+- name: Configure RouterOS via API
+  module_defaults:
+    group/community.routeros.api: "{{ routeros_api_args }}"
+  block:
+    - name: Info
+      ansible.builtin.import_tasks: info.yaml
+      tags: [never, info]
+
+    - name: State snapshot
+      ansible.builtin.import_tasks: state.yaml
+      tags: [never, state]
+
+    - name: Identity
+      ansible.builtin.import_tasks: identity.yaml
+
+    - name: System
+      ansible.builtin.import_tasks: system.yaml
+
+    - name: User
+      ansible.builtin.import_tasks: user.yaml
+
+    - name: License
+      ansible.builtin.import_tasks: license.yaml
+
+    - name: WireGuard
+      ansible.builtin.import_tasks: wireguard.yaml
+
+    - name: Routing
+      ansible.builtin.import_tasks: routing.yaml
+
+    - name: Interface (bridge / list)
+      ansible.builtin.import_tasks: interface.yaml
+
+    - name: WiFi
+      ansible.builtin.import_tasks: wifi.yaml
+
+    - name: Legacy wireless
+      ansible.builtin.import_tasks: wireless.yaml
+
+    - name: IP
+      ansible.builtin.import_tasks: ip.yaml
+
+    - name: Tool
+      ansible.builtin.import_tasks: tool.yaml
+
+    - name: SNMP
+      ansible.builtin.import_tasks: snmp.yaml

@@ -1,0 +1,16 @@
+---
+- name: Bootstrap users as default admin
+  community.routeros.api_modify:
+    username: admin
+    password: ""
+    path: user
+    data: "{{ routeros_users }}"
+  failed_when: false
+  when: routeros_users is not none
+
+- name: Set users
+  community.routeros.api_modify:
+    path: user
+    data: "{{ routeros_users }}"
+    handle_absent_entries: remove
+  when: routeros_users is not none

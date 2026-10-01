@@ -1,0 +1,16 @@
+---
+- name: SNMP
+  community.routeros.api_modify:
+    path: snmp
+    data: "{{ [routeros_snmp] }}"
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_snmp is not none
+
+- name: SNMP community
+  community.routeros.api_modify:
+    path: snmp community
+    data: "{{ routeros_snmp_communities }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  no_log: true
+  when: routeros_snmp_communities is not none

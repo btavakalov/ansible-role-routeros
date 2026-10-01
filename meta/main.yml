@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  role_name: routeros
+  namespace: btavakalov
+  author: Boris Tavakalov
+  description: Declarative configuration of MikroTik RouterOS devices over the API
+  license: MIT
+  min_ansible_version: "2.15"
+  galaxy_tags:
+    - routeros
+    - mikrotik
+    - networking
+    - router
+    - switch
+    - firewall
+    - wireguard
+    - capsman
+    - wifi
+    - snmp
+
+dependencies: []

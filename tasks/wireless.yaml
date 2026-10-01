@@ -1,0 +1,20 @@
+---
+# Legacy wireless (Atheros-class chips like AR9344 in RB951G-2HnD)
+
+- name: Interface wireless security-profiles
+  community.routeros.api_modify:
+    path: interface wireless security-profiles
+    data: "{{ routeros_interface_wireless_security_profiles }}"
+    # RouterOS always keeps a built-in, undeletable "default" profile (ID *0):
+    # remove fails here with "not enough permissions (9)" at any privilege level.
+    handle_absent_entries: ignore
+    handle_entries_content: remove_as_much_as_possible
+  no_log: true
+  when: routeros_interface_wireless_security_profiles is not none
+
+- name: Interface wireless
+  community.routeros.api_modify:
+    path: interface wireless
+    data: "{{ routeros_interface_wireless }}"
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_wireless is not none

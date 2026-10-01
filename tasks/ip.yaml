@@ -1,0 +1,130 @@
+---
+- name: IP address
+  community.routeros.api_modify:
+    path: ip address
+    data: "{{ routeros_ip_addresses }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_addresses is not none
+
+- name: IP DHCP client
+  community.routeros.api_modify:
+    path: ip dhcp-client
+    data: "{{ routeros_ip_dhcp_clients }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_dhcp_clients is not none
+
+- name: IP route
+  community.routeros.api_modify:
+    path: ip route
+    data: "{{ routeros_ip_routes }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_routes is not none
+
+- name: IP DNS
+  community.routeros.api_modify:
+    path: ip dns
+    data: "{{ [routeros_ip_dns] }}"
+  when: routeros_ip_dns is not none
+
+- name: IP DNS static
+  community.routeros.api_modify:
+    path: ip dns static
+    data: "{{ routeros_ip_dns_static }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_dns_static is not none
+
+- name: IP pool
+  community.routeros.api_modify:
+    path: ip pool
+    data: "{{ routeros_ip_pools }}"
+    handle_absent_entries: remove
+  when: routeros_ip_pools is not none
+
+- name: IP DHCP server network
+  community.routeros.api_modify:
+    path: ip dhcp-server network
+    data: "{{ routeros_ip_dhcp_server_networks }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_dhcp_server_networks is not none
+
+- name: IP DHCP server
+  community.routeros.api_modify:
+    path: ip dhcp-server
+    data: "{{ routeros_ip_dhcp_servers }}"
+    handle_absent_entries: remove
+  when: routeros_ip_dhcp_servers is not none
+
+- name: IP DHCP server option
+  community.routeros.api_modify:
+    path: ip dhcp-server option
+    data: "{{ routeros_ip_dhcp_server_options }}"
+    handle_absent_entries: remove
+  when: routeros_ip_dhcp_server_options is not none
+
+- name: IP DHCP server lease
+  community.routeros.api_modify:
+    path: ip dhcp-server lease
+    data: "{{ routeros_ip_dhcp_server_leases }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_ip_dhcp_server_leases is not none
+
+- name: IP neighbor discovery settings
+  community.routeros.api_modify:
+    path: ip neighbor discovery-settings
+    data: "{{ [routeros_ip_neighbor_discovery_settings] }}"
+  when: routeros_ip_neighbor_discovery_settings is not none
+
+- name: IP services
+  community.routeros.api_modify:
+    path: ip service
+    data: "{{ routeros_ip_services }}"
+  when: routeros_ip_services is not none
+
+- name: IP firewall mangle
+  community.routeros.api_modify:
+    path: ip firewall mangle
+    data: "{{ routeros_ip_firewall_mangle }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    ensure_order: true
+  when: routeros_ip_firewall_mangle is not none
+
+- name: IP firewall filter
+  community.routeros.api_modify:
+    path: ip firewall filter
+    data: "{{ routeros_ip_firewall_filter }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    ensure_order: true
+  when: routeros_ip_firewall_filter is not none
+
+- name: IP firewall nat
+  community.routeros.api_modify:
+    path: ip firewall nat
+    data: "{{ routeros_ip_firewall_nat }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    ensure_order: true
+  when: routeros_ip_firewall_nat is not none
+
+- name: IP firewall raw
+  community.routeros.api_modify:
+    path: ip firewall raw
+    data: "{{ routeros_ip_firewall_raw }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    ensure_order: true
+  when: routeros_ip_firewall_raw is not none
+
+- name: IP firewall address-list
+  community.routeros.api_modify:
+    path: ip firewall address-list
+    data: "{{ routeros_ip_firewall_address_list }}"
+    handle_absent_entries: remove
+  when: routeros_ip_firewall_address_list is not none

@@ -1,0 +1,44 @@
+---
+- name: Read system info
+  community.routeros.api:
+    path: "{{ item }}"
+  check_mode: false
+  loop:
+    - system identity
+    - system package
+    - system resource
+    - system license
+    - system clock
+  register: routeros_info
+
+# CHR have no /system routerboard menu at all.
+- name: Read routerboard info
+  community.routeros.api:
+    path: system routerboard
+  check_mode: false
+  failed_when: false
+  register: routeros_routerboard
+
+- name: Show system info
+  vars:
+    info: "{{ dict(routeros_info.results | map(attribute='item') | zip(routeros_info.results | map(attribute='msg'))) }}"
+    res: "{{ info['system resource'][0] }}"
+    clock: "{{ info['system clock'][0] }}"
+    rb: "{{ (routeros_routerboard.msg | first) if not (routeros_routerboard.failed | default(false)) else {} }}"
+    model: "{{ rb.model | default('-') }}"
+    product: "{{ 'RB' ~ model[12:] | replace(' ', '') if model.startswith('RouterBOARD ') else model }}"
+  ansible.builtin.debug:
+    msg: |
+      Identity: {{ info['system identity'][0].name }}
+      Board:    {{ res['board-name'] }} ({{ res['architecture-name'] }}, {{ res['cpu-count'] }} CPU)
+      Model:    {{ product }} rev {{ rb.revision | default('-') }} ({{ rb.model | default('-') }})
+      Serial:   {{ rb['serial-number'] | default('-') }}, firmware {{ rb['current-firmware'] | default('-') }}
+      RouterOS: {{ res.version }}
+      Uptime:   {{ res.uptime }}
+      Time:     {{ clock.date }} {{ clock.time }} {{ clock['time-zone-name'] }}
+      CPU load: {{ res['cpu-load'] }}%
+      Memory:   {{ ((res['total-memory'] - res['free-memory']) / 1048576) | int }} / {{ (res['total-memory'] / 1048576) | int }} MB
+      Storage:  {{ ((res['total-hdd-space'] - res['free-hdd-space']) / 1048576) | int }} / {{ (res['total-hdd-space'] / 1048576) | int }} MB
+      Packages: {% for p in info['system package'] %}{{ p.name }} {{ p.version }}{{ ', ' if not loop.last }}{% endfor %}
+
+      License:  level {{ info['system license'][0].nlevel | default(info['system license'][0].level | default('?')) }}

@@ -1,0 +1,6 @@
+---
+- name: System identity
+  community.routeros.api_modify:
+    path: system identity
+    data:
+      - name: "{{ routeros_identity }}"

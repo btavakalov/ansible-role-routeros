@@ -1,0 +1,60 @@
+---
+- name: Interface wifi security
+  community.routeros.api_modify:
+    path: interface wifi security
+    data: "{{ routeros_interface_wifi_securities }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_wifi_securities is not none
+
+- name: Interface wifi steering
+  community.routeros.api_modify:
+    path: interface wifi steering
+    data: "{{ routeros_interface_wifi_steering }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_wifi_steering is not none
+
+- name: Interface wifi datapath
+  community.routeros.api_modify:
+    path: interface wifi datapath
+    data: "{{ routeros_interface_wifi_datapaths }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+  when: routeros_interface_wifi_datapaths is not none
+
+- name: Interface wifi configuration
+  community.routeros.api_modify:
+    path: interface wifi configuration
+    data: "{{ routeros_interface_wifi_configurations }}"
+    handle_absent_entries: remove
+  when: routeros_interface_wifi_configurations is not none
+
+- name: Interface wifi provisioning
+  community.routeros.api_modify:
+    path: interface wifi provisioning
+    data: "{{ routeros_interface_wifi_provisioning }}"
+    handle_absent_entries: remove
+    handle_entries_content: remove_as_much_as_possible
+    ensure_order: true
+  when: routeros_interface_wifi_provisioning is not none
+
+- name: Interface wifi capsman (single-value settings)
+  community.routeros.api_modify:
+    path: interface wifi capsman
+    data: "{{ routeros_interface_wifi_capsman }}"
+  when: routeros_interface_wifi_capsman is not none
+
+- name: Interface wifi
+  community.routeros.api_modify:
+    path: interface wifi
+    data: "{{ routeros_interface_wifi }}"
+    handle_absent_entries: remove
+    handle_entries_content: ignore
+  when: routeros_interface_wifi is not none
+
+- name: Interface wifi cap (single-value settings)
+  community.routeros.api_modify:
+    path: interface wifi cap
+    data: "{{ routeros_interface_wifi_cap }}"
+  when: routeros_interface_wifi_cap is not none
