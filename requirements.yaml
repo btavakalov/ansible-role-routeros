@@ -1,0 +1,4 @@
+---
+collections:
+  - name: community.routeros
+    version: ">=3.0.0"

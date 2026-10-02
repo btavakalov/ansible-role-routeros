@@ -6,6 +6,10 @@ One variable per RouterOS menu path; `null` (the default) leaves a path alone,
 otherwise the variable is the full desired contents of that path. See
 `defaults/main/` for the list.
 
+```bash
+ansible-galaxy collection install -r requirements.yaml
+```
+
 ```yaml
 - name: Configure RouterOS
   hosts: routeros          # ansible_connection: local, API credentials in group_vars
