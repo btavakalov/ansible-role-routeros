@@ -54,8 +54,8 @@ routeros_license_account: null
 routeros_license_password: null
 routeros_license_level: "free"
 
-routeros_wireguard_interfaces: null
-routeros_wireguard_peers: null
+routeros_interface_wireguard: null
+routeros_interface_wireguard_peers: null
 
 routeros_routing_tables: []
 
