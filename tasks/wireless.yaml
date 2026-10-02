@@ -16,5 +16,5 @@
   community.routeros.api_modify:
     path: interface wireless
     data: "{{ routeros_interface_wireless }}"
-    handle_entries_content: remove_as_much_as_possible
+    handle_entries_content: ignore
   when: routeros_interface_wireless is not none
