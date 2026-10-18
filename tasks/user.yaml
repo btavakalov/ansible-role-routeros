@@ -15,10 +15,93 @@
     handle_absent_entries: remove
   when: routeros_users is not none
 
+# RouterOS never returns `key` on read, but community.routeros (3.22.0) describes it
+# as a regular field: api_modify then reports the entry as changed on every run.
+# Emulate handle_write_only=create_only: entries are matched by user + fingerprint,
+# and `key` is sent only for keys the device does not have yet.
+#
+# TODO: drop the workaround once upstream marks the field write-only. Issue draft
+# for https://github.com/ansible-collections/community.routeros/issues:
+#
+#   Title: api_modify: `key` of `user ssh-keys` should be write-only
+#
+#   SUMMARY
+#   RouterOS does not return the `key` field of /user/ssh-keys entries (checked on
+#   7.22.3 and 7.24.4); `print detail` only shows `user`, `key-type`, `bits`,
+#   `info` and `fingerprint`. The path data in plugins/module_utils/_api_data.py
+#   declares it as `'key': KeyInfo()`, so api_modify never sees the value it has
+#   written and reports `changed` on every run, trying to add `key` to the
+#   existing entry.
+#
+#   ISSUE TYPE
+#   Bug Report
+#
+#   COMPONENT NAME
+#   community.routeros.api_modify (plugins/module_utils/_api_data.py)
+#
+#   STEPS TO REPRODUCE
+#   - community.routeros.api_modify:
+#       path: user ssh-keys
+#       data:
+#         - user: admin
+#           key: "ssh-rsa AAAA..."
+#       handle_absent_entries: remove
+#       handle_entries_content: remove_as_much_as_possible
+#   Run it twice.
+#
+#   EXPECTED RESULTS
+#   The second run reports ok.
+#
+#   ACTUAL RESULTS
+#   The second run reports changed, the diff adds `key` to the entry read back
+#   without it.
+#
+#   PROPOSED FIX
+#   `'key': KeyInfo(write_only=True)`, so the default handle_write_only=create_only
+#   applies. Exposing `fingerprint` (read-only) would also allow detecting key
+#   rotation.
+- name: Read user SSH keys
+  community.routeros.api_info:
+    path: user ssh-keys
+    unfiltered: true
+  register: routeros_user_ssh_keys_current
+  check_mode: false
+  when: routeros_user_ssh_keys is not none
+
+- name: Fingerprint declared user SSH keys
+  ansible.builtin.command:
+    cmd: ssh-keygen -lf -
+    stdin: "{{ item.key }}"
+  loop: "{{ routeros_user_ssh_keys | default([], true) }}"
+  loop_control:
+    label: "{{ item.user }}"
+  register: routeros_user_ssh_keys_fingerprints
+  changed_when: false
+  check_mode: false
+  delegate_to: localhost
+  when: routeros_user_ssh_keys is not none
+
 - name: Set user SSH keys
+  vars:
+    # RouterOS keeps base64 padding in the fingerprint, ssh-keygen strips it.
+    present: >-
+      {{ routeros_user_ssh_keys_current.result | map(attribute='user')
+         | zip(routeros_user_ssh_keys_current.result | map(attribute='fingerprint')
+               | map('regex_replace', '=+$', ''))
+         | map('join', '|') | list }}
+    data: >-
+      {%- set out = [] -%}
+      {%- for r in routeros_user_ssh_keys_fingerprints.results -%}
+      {%-   if [r.item.user, r.stdout.split()[1]] | join('|') in present -%}
+      {%-     set _ = out.append(r.item | dict2items | rejectattr('key', 'eq', 'key') | items2dict) -%}
+      {%-   else -%}
+      {%-     set _ = out.append(r.item) -%}
+      {%-   endif -%}
+      {%- endfor -%}
+      {{ out }}
   community.routeros.api_modify:
     path: user ssh-keys
-    data: "{{ routeros_user_ssh_keys }}"
+    data: "{{ data }}"
     handle_absent_entries: remove
     handle_entries_content: remove_as_much_as_possible
   when: routeros_user_ssh_keys is not none
