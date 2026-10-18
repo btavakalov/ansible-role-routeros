@@ -1,9 +1,12 @@
 ---
 - name: Read export
   ansible.builtin.command:
-    argv: "{{ ['ssh', '-o', 'BatchMode=yes'] + routeros_export_ssh_args
+    argv: "{{ (['sshpass', '-d', '0'] if routeros_export_ssh_password else [])
+              + ['ssh'] + routeros_export_ssh_args
               + [ansible_user ~ '@' ~ ansible_host, routeros_export_command] }}"
+    stdin: "{{ routeros_export_ssh_password | default(omit, true) }}"
   register: routeros_export
+  no_log: "{{ routeros_export_ssh_password is not none }}"
   changed_when: false
   check_mode: false
   delegate_to: localhost

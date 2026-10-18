@@ -15,7 +15,8 @@ routeros_state_dir: "{{ inventory_dir }}/../state"
 # /export is not available over the API: it is read over SSH from the controller.
 routeros_export_dir: "{{ inventory_dir }}/../export"
 routeros_export_command: /export hide-sensitive
-routeros_export_ssh_args: []
+routeros_export_ssh_args: [-o, BatchMode=yes]
+routeros_export_ssh_password: null
 
 routeros_state_ok: "{{ routeros_state.results | default([]) | selectattr('result', 'defined') | list }}"
 
