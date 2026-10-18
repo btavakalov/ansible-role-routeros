@@ -12,6 +12,11 @@ routeros_system_ntp_client: null
 
 routeros_state_dir: "{{ inventory_dir }}/../state"
 
+# /export is not available over the API: it is read over SSH from the controller.
+routeros_export_dir: "{{ inventory_dir }}/../export"
+routeros_export_command: /export hide-sensitive
+routeros_export_ssh_args: []
+
 routeros_state_ok: "{{ routeros_state.results | default([]) | selectattr('result', 'defined') | list }}"
 
 routeros_state_volatile_keys:
@@ -49,6 +54,7 @@ routeros_state_public_keys:
 routeros_state_secret_pattern: "key|password|passphrase|secret|community|token|credential|hash|auth|private"
 
 routeros_users: null
+routeros_user_ssh_keys: null
 
 routeros_license_account: null
 routeros_license_password: null

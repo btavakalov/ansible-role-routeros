@@ -14,3 +14,10 @@
     data: "{{ routeros_users }}"
     handle_absent_entries: remove
   when: routeros_users is not none
+
+- name: Set user SSH keys
+  community.routeros.api_modify:
+    path: user ssh-keys
+    data: "{{ routeros_user_ssh_keys }}"
+    handle_absent_entries: remove
+  when: routeros_user_ssh_keys is not none

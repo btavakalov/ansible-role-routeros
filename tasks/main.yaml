@@ -11,6 +11,10 @@
       ansible.builtin.import_tasks: state.yaml
       tags: [never, state]
 
+    - name: Configuration export
+      ansible.builtin.import_tasks: export.yaml
+      tags: [never, export]
+
     - name: Identity
       ansible.builtin.import_tasks: identity.yaml
 

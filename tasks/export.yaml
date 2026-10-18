@@ -1,0 +1,26 @@
+---
+- name: Read export
+  ansible.builtin.command:
+    argv: "{{ ['ssh', '-o', 'BatchMode=yes'] + routeros_export_ssh_args
+              + [ansible_user ~ '@' ~ ansible_host, routeros_export_command] }}"
+  register: routeros_export
+  changed_when: false
+  check_mode: false
+  delegate_to: localhost
+
+- name: Create export directory
+  ansible.builtin.file:
+    path: "{{ routeros_export_dir }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  run_once: true
+  check_mode: false
+
+- name: Write export
+  ansible.builtin.copy:
+    content: "{{ routeros_export.stdout | replace('\r', '') }}\n"
+    dest: "{{ routeros_export_dir }}/{{ inventory_hostname }}.rsc"
+    mode: "0644"
+  delegate_to: localhost
+  check_mode: false

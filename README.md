@@ -19,4 +19,5 @@ ansible-galaxy collection install -r requirements.yaml
 ```
 
 `--tags info` prints model and version, `--tags state` writes a sanitized
-configuration snapshot. `--check --diff` is supported throughout.
+configuration snapshot, `--tags export` saves `/export` output read over SSH
+(see `routeros_user_ssh_keys`). `--check --diff` is supported throughout.
