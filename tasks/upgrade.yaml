@@ -1,0 +1,97 @@
+---
+# Not part of main.yaml: run it from a play with serial: 1, so that routers reboot one
+# at a time and a router that did not come back stops the rest.
+- name: Upgrade RouterOS via API
+  module_defaults:
+    group/community.routeros.api: "{{ routeros_api_args }}"
+  block:
+    - name: Check for updates
+      community.routeros.api:
+        path: system package update
+        cmd: check-for-updates
+      changed_when: false
+      check_mode: false
+
+    - name: Read package versions
+      community.routeros.api_info:
+        path: system package update
+      register: routeros_upgrade_package
+      check_mode: false
+
+    # CHR have no /system routerboard menu at all.
+    - name: Read routerboard firmware
+      community.routeros.api:
+        path: system routerboard
+      register: routeros_upgrade_routerboard
+      failed_when: false
+      changed_when: false
+      check_mode: false
+
+    - name: Show versions
+      ansible.builtin.debug:
+        msg: |
+          RouterOS: {{ routeros_upgrade_installed }} -> {{ routeros_upgrade_latest }} ({{ routeros_upgrade_package.result[0].status | default('-') }})
+          Firmware: {{ routeros_upgrade_rb['current-firmware'] | default('-') }} -> {{ routeros_upgrade_rb['upgrade-firmware'] | default('-') }}
+
+    - name: Upgrade packages
+      when:
+        - routeros_upgrade_latest != routeros_upgrade_installed
+        - not ansible_check_mode
+      block:
+        # The router downloads the packages and reboots: the connection may drop mid-call.
+        - name: Install packages
+          community.routeros.api:
+            path: system package update
+            cmd: install
+          failed_when: false
+          changed_when: true
+
+        - name: Wait for the new RouterOS version
+          community.routeros.api_info:
+            path: system package update
+          register: routeros_upgrade_package_after
+          until: >-
+            routeros_upgrade_package_after is succeeded
+            and routeros_upgrade_package_after.result[0]['installed-version'] == routeros_upgrade_latest
+          retries: "{{ routeros_upgrade_retries }}"
+          delay: "{{ routeros_upgrade_delay }}"
+
+        # upgrade-firmware follows the installed RouterOS version.
+        - name: Read routerboard firmware after upgrade
+          community.routeros.api:
+            path: system routerboard
+          register: routeros_upgrade_routerboard_upgraded
+          failed_when: false
+          changed_when: false
+
+    - name: Upgrade routerboard firmware
+      when:
+        - routeros_upgrade_rb['current-firmware'] is defined
+        - routeros_upgrade_rb['current-firmware'] != routeros_upgrade_rb['upgrade-firmware']
+        - not ansible_check_mode
+      block:
+        - name: Upgrade firmware
+          community.routeros.api:
+            path: system routerboard
+            cmd: upgrade
+          changed_when: true
+
+        # The firmware is applied on reboot; the connection drops mid-call.
+        - name: Reboot
+          community.routeros.api:
+            path: system
+            cmd: reboot
+          failed_when: false
+          changed_when: true
+
+        - name: Wait for the new firmware
+          community.routeros.api:
+            path: system routerboard
+          register: routeros_upgrade_routerboard_after
+          until: >-
+            routeros_upgrade_routerboard_after is succeeded
+            and routeros_upgrade_routerboard_after.msg[0]['current-firmware']
+                == routeros_upgrade_routerboard_after.msg[0]['upgrade-firmware']
+          retries: "{{ routeros_upgrade_retries }}"
+          delay: "{{ routeros_upgrade_delay }}"
+          changed_when: false

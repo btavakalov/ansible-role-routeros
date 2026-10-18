@@ -18,6 +18,16 @@ routeros_export_command: /export hide-sensitive
 routeros_export_ssh_args: [-o, BatchMode=yes]
 routeros_export_ssh_password: null
 
+# tasks_from: upgrade. Waits up to retries x delay seconds for each reboot.
+routeros_upgrade_retries: 60
+routeros_upgrade_delay: 10
+routeros_upgrade_installed: "{{ routeros_upgrade_package.result[0]['installed-version'] }}"
+routeros_upgrade_latest: "{{ routeros_upgrade_package.result[0]['latest-version'] | default(routeros_upgrade_installed, true) }}"
+routeros_upgrade_rb: >-
+  {{ ((routeros_upgrade_routerboard_upgraded
+       if routeros_upgrade_routerboard_upgraded is defined and routeros_upgrade_routerboard_upgraded is not skipped
+       else routeros_upgrade_routerboard).msg | default([]) | select('mapping') | first) | default({}) }}
+
 routeros_state_ok: "{{ routeros_state.results | default([]) | selectattr('result', 'defined') | list }}"
 
 routeros_state_volatile_keys:

@@ -21,3 +21,20 @@ ansible-galaxy collection install -r requirements.yaml
 `--tags info` prints model and version, `--tags state` writes a sanitized
 configuration snapshot, `--tags export` saves `/export` output read over SSH
 (see `routeros_user_ssh_keys`). `--check --diff` is supported throughout.
+
+`tasks_from: upgrade` installs a newer RouterOS from the configured update channel
+and then upgrades the routerboard firmware, waiting for each reboot. Run it from a
+play with `serial: 1`, so that routers reboot one at a time; `--check` only shows
+the versions.
+
+```yaml
+- name: Upgrade RouterOS
+  hosts: routeros
+  gather_facts: false
+  serial: 1
+  tasks:
+    - name: Upgrade
+      ansible.builtin.include_role:
+        name: routeros
+        tasks_from: upgrade
+```
