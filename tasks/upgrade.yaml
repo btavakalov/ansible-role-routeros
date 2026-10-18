@@ -15,6 +15,7 @@
     - name: Read package versions
       community.routeros.api_info:
         path: system package update
+        include_read_only: true
       register: routeros_upgrade_package
       check_mode: false
 
@@ -49,6 +50,7 @@
         - name: Wait for the new RouterOS version
           community.routeros.api_info:
             path: system package update
+            include_read_only: true
           register: routeros_upgrade_package_after
           until: >-
             routeros_upgrade_package_after is succeeded
