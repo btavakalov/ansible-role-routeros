@@ -19,8 +19,7 @@
 
 - name: Write export
   ansible.builtin.copy:
-    content: |
-      {{ routeros_export.stdout_lines | join('\n') }}
+    content: "{{ routeros_export.stdout_lines | join('\n') }}\n"
     dest: "{{ routeros_export_dir }}/{{ inventory_hostname }}.rsc"
     mode: "0644"
   delegate_to: localhost
