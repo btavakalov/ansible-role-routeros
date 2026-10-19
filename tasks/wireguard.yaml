@@ -4,6 +4,7 @@
     path: interface wireguard
     data: "{{ routeros_interface_wireguard }}"
     handle_absent_entries: remove
+  no_log: true
   when: routeros_interface_wireguard is not none
 
 - name: Interface wireguard peers
